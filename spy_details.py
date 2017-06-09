@@ -37,7 +37,7 @@ class ChatMessage:
 
 
 # declaring a default spy
-spy = Spy("James Bond", "Mr. ", 22, 4.0)
+spy = Spy("James Bond", "Mr. ", 22, 4.2)
 
 # Making a friends list
 

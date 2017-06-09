@@ -41,7 +41,7 @@ def start_chat(spy_name, spy_age, spy_rating):
 				menu_choice = int(menu_choice)
 
 				if menu_choice == 1:
-					current_status_message = add_status()
+					current_status_message = add_status(current_status_message)
 					print "updated message :"+current_status_message
 				elif menu_choice == 2:
 					number_of_friends = add_friend()
@@ -58,44 +58,70 @@ def start_chat(spy_name, spy_age, spy_rating):
 		print 'Sorry you are not of the correct age to be a spy'	
 
 
-def add_status():
-	# method to display statuses
-	print spy.current_status
+def add_status(current_status_message):
+	# initialising varaible
+	updated_status_message = None
 
-	default = (raw_input("Do you want to select from the old statuses (Y/N)?:\n")).upper()
+	#check for current status(if any)
+	if current_status_message != None:
+		print 'Your current status message is %s \n' % (current_status_message)
+	else:
+		print 'You don\'t have any status message currently \n'
+
+
+	default = raw_input("Do you want to select from the older status (y/n)? ")
 
 	if default.upper() == "N":
+		new_status_message = raw_input("What status message do you want to set? ")
 
-		new_status_msg = raw_input("Set a new status message\n")
+		if len(new_status_message) > 0:
+			STATUS_MESSAGES.append(new_status_message)
+			updated_status_message = new_status_message
 
-		if len(new_status_msg) > 0:
+	elif default.upper() == 'Y':
+		#display list of saved status messages
+		item_position = 1
+		for message in STATUS_MESSAGES:
+			print '%d. %s' % (item_position, message)
+			item_position = item_position + 1
 
-			spy.current_status = new_status_msg
-			# Appending new status to status list
-			STATUS_MESSAGES.append(new_status_msg)
+		#selecting from the saved staus messages		
+		message_selection = int(raw_input("\nChoose from the above messages "))
 
-		else:
 
-			print "Invalid Status Message!"
-
-	elif default.upper() == "Y":
-		item_pos = 1
-		# default statuses
-		for status in STATUS_MESSAGES:
-			print "%d. %s" % (item_pos, status)
-
-			item_pos = item_pos + 1
-
-		msg_choice = int(raw_input("Enter the status index of you choice :\n"))
-
-		# Update current status
-		spy.current_status = STATUS_MESSAGES[msg_choice - 1]
+		if len(STATUS_MESSAGES) >= 	message_selection:
+			updated_status_message = STATUS_MESSAGES[message_selection - 1]
 
 	else:
-		print "Wrong choice!"
-		quit()
+		print 'The option you chose is not valid! Press either y or n.'
 
-	return spy.current_status
+	if updated_status_message:
+		print 'Your updated status message is: %s' % (updated_status_message)
+	else:
+		print 'You currently don\'t have a status update'
+
+	return updated_status_message
+
+
+def add_friend():
+	# initialising spy object
+	friend = Spy('','', 0,0)
+	# getting credentials
+	friend.name= raw_input("Input a new friend name : ")
+	friend.salutation = raw_input("Is new friend Mr. or Ms.  :")
+	friend.age = int(raw_input("Input his age  :"))
+	friend.rating = float(raw_input("Input his rating  :"))
+
+	# Checking Validity of new friend
+	if len(friend.name)>0 and 18<=friend.age<=40 and spy.rating<=friend.rating<=5.0:
+
+		frien.append(friend)
+		print friend.salutation+friend.name+"with age "+friend.age+" and rating "+friend.rating+" added to your friend\'s list"
+
+	else :
+		print "This man is not qualified enough to be a friend. \n"	
+
+	return len(friends)	
 
 
 

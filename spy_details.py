@@ -44,4 +44,4 @@ spy = Spy("James Bond", "Mr. ", 22, 4.2)
 
 
 
-friends = [Spy('Akshay', 'Mr.', 27, 4.9), Spy('Jane Baeur', 'Ms.', 21, 4.39), Spy('Who', 'Dr.', 37, 4.95)]
+friends = [Spy('John Wick', 'Mr.', 35, 4.6), Spy('Jane Bond', 'Ms.', 28, 4.5), Spy('Alec Leamas', 'Mr.', 38, 4.8),Spy('Jack Ryan','Mr.', 33,4.0)]

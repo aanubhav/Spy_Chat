@@ -1,7 +1,12 @@
-from spy_details import spy
+from spy_details import spy,Spy,ChatMessage,friends
+from steganography.steganography import Steganography
+from datetime import datetime
+from termcolor import colored, cprint
+
+import colorama
 
 STATUS_MESSAGES = ['Busy', 'On a misson', 'AFK','Urgent Calls only','Do not Disturb']
-
+SPECIAL_WORDS = ['SOS', 'SAVE ME','FIRING','KILL','HELP','ALERT','PRESIDENT','MISSILE','CRITICAL','COUP','WAR']
 def spy_reception(name):
 	if spy.rating > 4.5:
 
@@ -34,7 +39,7 @@ def start_chat(spy_name, spy_age, spy_rating):
 		show_menu = True
 
 		while show_menu:
-			menu_choices = "What do you want to do? \n 1. Add a status update \n 2. Add a friend \n 3. Send a secret message \n 4. Read a secret message \n 5. Read Chats from a user \n 6. Close Application \n"
+			menu_choices = "\nWhat do you want to do? \n 1. Add a status update \n 2. Add a friend \n 3. Send a secret message \n 4. Read a secret message \n 5. Read Chats from a user \n 6. Close Application \n"
 			menu_choice = raw_input(menu_choices)
 
 			if len(menu_choice) > 0:
@@ -45,7 +50,8 @@ def start_chat(spy_name, spy_age, spy_rating):
 					print "updated message :"+current_status_message
 				elif menu_choice == 2:
 					number_of_friends = add_friend()
-					print 'You have %d friends' % (number_of_friends)
+					print 'You now have %d friends' % (number_of_friends)
+					print "\n"
 				elif menu_choice == 3:
 					send_message()
 				elif menu_choice == 4:
@@ -115,13 +121,95 @@ def add_friend():
 	# Checking Validity of new friend
 	if len(friend.name)>0 and 18<=friend.age<=40 and spy.rating<=friend.rating<=5.0:
 
-		frien.append(friend)
-		print friend.salutation+friend.name+"with age "+friend.age+" and rating "+friend.rating+" added to your friend\'s list"
+		friends.append(friend)
+		print "\n"+friend.salutation+" "+friend.name+" with age "+str(friend.age)+" and rating "+str(friend.rating)+" added to your friend\'s list\n"
 
 	else :
 		print "This man is not qualified enough to be a friend. \n"	
 
 	return len(friends)	
+
+
+def send_message():
+	friend_choice = select_a_friend()
+	#path for file to encode 
+	original_image = "input.jpg"
+	#path for file which will store message
+	output_path = "output.jpg"
+	text = raw_input("What do you want to say? ")
+	#encoding image
+	Steganography.encode(original_image, output_path, text)
+	#new object for ChatMessage class
+	new_chat = ChatMessage(text,True)
+	#adding chat information to chat list(maintained as object to Spy class )
+	friends[friend_choice].chats.append(new_chat)
+	print "Your secret message image is ready!"
+
+def select_a_friend():
+	item_number = 0
+	# searching for a friend in friend's list
+	for friend in friends:
+		print "%d. %s aged %d with rating %.2f is online" % (item_number +1,friend.name,
+													friend.age,
+													friend.rating)
+		item_number = item_number + 1
+
+	# Input friend choice	
+	friend_choice = raw_input("Choose from your friends ")
+
+	friend_choice_position = int(friend_choice) - 1
+	if friend_choice_position+1 >len(friends):
+		print "no such friend found"
+		quit()
+
+	else :
+		return friend_choice_position
+
+def read_message():
+	sender = select_a_friend()
+	#path for file to decode
+	output_path = "output.jpg"
+	#decoding secret text
+	secret_text = Steganography.decode(output_path)
+	if len(secret_text)>0:
+		#new chat object
+		new_chat = ChatMessage(secret_text,False)
+		#adding chat to chats(maintained in Spy class)
+		friends[sender].chats.append(new_chat)
+
+		text = secret_text.split()
+		#to keeep track of words spoken by sender
+		friends[sender].word_count += len(text)
+
+		#initialize colorama
+		colorama.init()
+		text1 = (secret_text.upper()).split()
+		counter = 0
+		for urgent in SPECIAL_WORDS:
+			if urgent in text1:
+				counter += 1
+		if counter>0:
+			cprint("Mission CRITICAL !!\nDispatch Support NOW\n",'red')	
+			print "%s\'s  message : %s"%(friends[sender].name,secret_text)
+		else :
+			print "%s\'s  message : %s"%(friends[sender].name,secret_text)
+	else :
+		print "no message found"				
+
+
+
+def read_chat():
+	friend_select = select_a_friend()
+
+	for chat in friends[friend_select].chats:
+		if chat.sent_by_me == True :
+			print "sent by me\n"
+			print "Sent at "+chat.time.strftime("%d %B %Y")
+			print "message  :"+chat.message
+		else :
+			print "\nsent by "+friends[friend_select].name
+			print "Sent at "+chat.time.strftime("%d %B %Y")
+			print "message  :"+chat.message+"\n"
 
 
 

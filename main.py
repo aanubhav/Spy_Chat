@@ -132,10 +132,12 @@ def add_friend():
 
 def send_message():
 	friend_choice = select_a_friend()
-	#path for file to encode 
-	original_image = "input.jpg"
+	#path for file to encode(input from user) 
+	original_image = raw_input("give a name of file to which you\'ve to encode message :\n")
+	original_image += '.jpg'
 	#path for file which will store message
-	output_path = "output.jpg"
+	output_path = raw_input("\nfile name for encoded file  : ")
+	output_path += '.jpg'
 	text = raw_input("What do you want to say? ")
 	#encoding image
 	Steganography.encode(original_image, output_path, text)
@@ -168,7 +170,8 @@ def select_a_friend():
 def read_message():
 	sender = select_a_friend()
 	#path for file to decode
-	output_path = "output.jpg"
+	output_path = raw_input("enter path to the output file to decode message,if any :\n")
+	output_path += '.jpg'
 	#decoding secret text
 	secret_text = Steganography.decode(output_path)
 	if len(secret_text)>0:
@@ -193,6 +196,15 @@ def read_message():
 			print "%s\'s  message : %s"%(friends[sender].name,secret_text)
 		else :
 			print "%s\'s  message : %s"%(friends[sender].name,secret_text)
+
+
+		if(len(secret_text.split())>10):
+			print "you speak too much, i\'m gonna remove you\n"
+			friends.remove(friends[sender])	
+			print "your remaining friends :\n"
+			for frienn in friends:
+				print frienn.name
+				print '\n'
 	else :
 		print "no message found"				
 
